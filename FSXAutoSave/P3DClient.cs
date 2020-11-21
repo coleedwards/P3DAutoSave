@@ -10,6 +10,7 @@ using System.Timers;
 using System.Windows.Forms;
 using System.IO;
 using LockheedMartin.Prepar3D.SimConnect;
+using System.Diagnostics;
 
 namespace P3DAutoSave
 {
@@ -20,7 +21,8 @@ namespace P3DAutoSave
         SIM_PAUSE,
         EVENT_MENU,
         EVENT_MENU_ENABLE_DISABLE,
-        EVENT_MENU_OPTIONS
+        EVENT_MENU_OPTIONS,
+        EVENT_MENU_SAVE
     }
 
     public class P3DClient
@@ -33,7 +35,7 @@ namespace P3DAutoSave
         private string autoSavedFlightsPath;
         private int maxNumSavesToKeep;
 
-        private bool simRunning = false;
+        private bool simRunning = true;
         private bool simPaused = false;
 
         private bool saveEnabled;
@@ -59,6 +61,7 @@ namespace P3DAutoSave
             p3d.MenuAddItem("P3DAutoSave", EVENTS.EVENT_MENU, 0);
             p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Enable/Disable", EVENTS.EVENT_MENU_ENABLE_DISABLE, 0);
             p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Options", EVENTS.EVENT_MENU_OPTIONS, 0);
+            p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Save", EVENTS.EVENT_MENU_SAVE, 0);
         }
 
         public void resetSaveTimer()
@@ -185,6 +188,10 @@ namespace P3DAutoSave
                     Console.WriteLine("Options menu pressed");
                     showOptionsWindow();
                     break;
+                case (uint)EVENTS.EVENT_MENU_SAVE:
+                    Console.WriteLine("Save menu pressed");
+                    saveGame(null, null);
+                    break;
             }
         }
 
@@ -201,21 +208,34 @@ namespace P3DAutoSave
             {
                 if (canSaveWhilePaused || (!canSaveWhilePaused && !simPaused))
                 {
+
+                    Console.WriteLine("3");
+
+                    Console.WriteLine("test1");
                     string currentTime = DateTime.Now.ToString();
                     // Filter slashes, colons, and spaces
                     currentTime = currentTime.Replace('/', '_').Replace(':', '_').Replace(' ', '_');
+                    Console.WriteLine("test3");
 
-                    // Get files in directory and delete least recent one if number of files exceeds capacity
-                    var fileArr = Directory.GetFiles(autoSavedFlightsPath);
-                    Array.Sort(fileArr);
+                    Console.WriteLine("test5");
 
-                    #if !DEBUG
-                        string fullPath = "P3DAutoSave\\" + FILENAME_BASE + currentTime;
-                        Console.WriteLine("Full path: " + fullPath);
-                        fsx.FlightSave(fullPath, null, "P3DAutoSave autosaved flight", 0);
-                    #endif
+                    Console.WriteLine("test6");
+                    string fullPath = "P3DAutoSave\\" + FILENAME_BASE + currentTime;
+                    Console.WriteLine("Full path: " + fullPath);
+                    p3d.FlightSave(fullPath, null, "P3DAutoSave autosaved flight", 0);
                     Console.WriteLine("Game saved: " + currentTime);
+                    Console.WriteLine("test7");
+                } else
+                {
+                    Console.WriteLine("2");
+                    Console.WriteLine(canSaveWhilePaused);
+                    Console.WriteLine(simPaused);
                 }
+            } else
+            {
+                Console.WriteLine("1");
+                Console.WriteLine(saveEnabled);
+                Console.WriteLine(simRunning);
             }
         }
 
@@ -232,11 +252,13 @@ namespace P3DAutoSave
         public void showOptionsWindow()
         {
             optionsWindow.Visible = true;
+            optionsWindow.Show();
         }
 
         public void hideOptionsWindow()
         {
             optionsWindow.Visible = false;
+            optionsWindow.Hide();
         }
 
         public void enableSaveWhilePaused()
