@@ -2,6 +2,8 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using System.Reflection;
+using System.IO;
 
 namespace P3DAutoSave
 {
@@ -40,6 +42,7 @@ namespace P3DAutoSave
             Application.SetCompatibleTextRenderingDefault(false);
             SimConnectDummyWindow form1 = new SimConnectDummyWindow();
             form1.Visible = false;
+
 
             P3DClient fsx = new P3DClient(form1);
             form1.registerSimConnect(fsx);

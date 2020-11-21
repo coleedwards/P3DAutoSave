@@ -112,6 +112,7 @@ namespace P3DAutoSave
             }
             catch (COMException e)
             {
+                MessageBox.Show(e.Message);
                 MessageBox.Show("Please start P3D before launching this application.");
                 Environment.Exit(1);
             }

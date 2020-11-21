@@ -164,7 +164,7 @@
             this.p3dVersionSelector.Size = new System.Drawing.Size(50, 20);
             this.p3dVersionSelector.TabIndex = 8;
             this.p3dVersionSelector.Value = new decimal(new int[] {
-            5,
+            4,
             0,
             0,
             0});
