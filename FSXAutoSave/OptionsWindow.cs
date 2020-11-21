@@ -1,19 +1,19 @@
 ﻿//
-// FSXAutoSave options dialog
+// P3DAutoSave options dialog
 // Author: Jack Harkins
 //
 
 using System;
 using System.Windows.Forms;
 
-namespace FSXAutoSave
+namespace P3DAutoSave
 {
     public partial class OptionsWindow : Form
     {
 
-        private FSXClient fsx;
+        private P3DClient fsx;
 
-        public OptionsWindow(FSXClient fsx)
+        public OptionsWindow(P3DClient fsx)
         {
             InitializeComponent();
             this.fsx = fsx;
@@ -65,12 +65,22 @@ namespace FSXAutoSave
         {
             if (checkBoxSaveWhilePaused.Checked)
             {
-                fsx.enableAutoSaveOnFSXStart();
+                fsx.enableAutoSaveOnP3DStart();
             }
             else
             {
-                fsx.disableAutoSaveOnFSXStart();
+                fsx.disableAutoSaveOnP3DStart();
             }
+        }
+
+        private void OptionsWindow_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void p3dVersionSelector_ValueChanged(object sender, EventArgs e)
+        {
+            fsx.setP3DVersion((int)p3dVersionSelector.Value);
         }
     }
 }

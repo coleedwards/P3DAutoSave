@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30002.166
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FSXAutoSave", "FSXAutoSave\FSXAutoSave.csproj", "{B5CFFE6C-DC3C-4DF1-8A27-E4345A231993}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "P3DAutoSave", "FSXAutoSave\P3DAutoSave.csproj", "{B5CFFE6C-DC3C-4DF1-8A27-E4345A231993}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +18,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {10D7630B-56F7-4DA2-B740-7F743165869A}
 	EndGlobalSection
 EndGlobal

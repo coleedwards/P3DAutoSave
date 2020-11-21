@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 
-namespace FSXAutoSave
+namespace P3DAutoSave
 {
     public class Program
     {
@@ -22,10 +22,10 @@ namespace FSXAutoSave
                 // Check if program was started by user or FSX
                 if (args.Length != 1 || args[0] != "-f")
                 {
-                    MessageBox.Show("You have started FSXAutoSave outside of FSX (i.e. by double-clicking the "
-                        + "executable file). Please be aware that running multiple instances of FSXAutoSave may "
+                    MessageBox.Show("You have started P3DAutoSave outside of FSX (i.e. by double-clicking the "
+                        + "executable file). Please be aware that running multiple instances of P3DAutoSave may "
                         + "result in strange behavior. The application will now close, but you may override this "
-                        + "functionality by running FSXAutoSave with the -f command-line flag.");
+                        + "functionality by running P3DAutoSave with the -f command-line flag.");
                     Environment.Exit(1);
                 }
             #endif
@@ -41,7 +41,7 @@ namespace FSXAutoSave
             SimConnectDummyWindow form1 = new SimConnectDummyWindow();
             form1.Visible = false;
 
-            FSXClient fsx = new FSXClient(form1);
+            P3DClient fsx = new P3DClient(form1);
             form1.registerSimConnect(fsx);
             Application.Run();
         }

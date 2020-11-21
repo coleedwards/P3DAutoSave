@@ -1,4 +1,4 @@
-﻿namespace FSXAutoSave
+﻿namespace P3DAutoSave
 {
     partial class SimConnectDummyWindow
     {

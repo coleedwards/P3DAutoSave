@@ -1,19 +1,17 @@
 ﻿//
-// FSX SimConnect client and autosave functionality
+// Prepar3D SimConnect client and autosave functionality
 // Author: Jack Harkins
+// Forked: Cole Edwards
 //
 
 using System;
-using Microsoft.FlightSimulator.SimConnect;
 using System.Runtime.InteropServices;
 using System.Timers;
 using System.Windows.Forms;
 using System.IO;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
+using LockheedMartin.Prepar3D.SimConnect;
 
-namespace FSXAutoSave
+namespace P3DAutoSave
 {
     enum EVENTS
     {
@@ -22,16 +20,17 @@ namespace FSXAutoSave
         SIM_PAUSE,
         EVENT_MENU,
         EVENT_MENU_ENABLE_DISABLE,
-        EVENT_MENU_OPTIONS,
+        EVENT_MENU_OPTIONS
     }
 
-    public class FSXClient
+    public class P3DClient
     {
-        private SimConnect fsx; // The SimConnect client
+        private SimConnect p3d; // The SimConnect client
 
         private int saveInterval; // seconds
-        private const string FILENAME_BASE = "FSXAutoSave_";
-        private string autoSavedFlightsPath = "C:\\Users\\jthem\\Documents\\Flight Simulator X Files\\FSXAutoSave\\";
+        private int p3dVersion = 5;
+        private const string FILENAME_BASE = "P3DAutoSave_";
+        private string autoSavedFlightsPath;
         private int maxNumSavesToKeep;
 
         private bool simRunning = false;
@@ -39,25 +38,27 @@ namespace FSXAutoSave
 
         private bool saveEnabled;
         private bool canSaveWhilePaused;
-        private bool autoSaveOnFSXStart;
+        private bool autoSaveOnP3DStart;
         private System.Timers.Timer saveTimer;
 
         private SimConnectDummyWindow dummyWindow;
         private OptionsWindow optionsWindow;
 
-        public FSXClient(SimConnectDummyWindow dummyWindow) {
+        public P3DClient(SimConnectDummyWindow dummyWindow) {
             this.dummyWindow = dummyWindow;
             setupSimConnect();
-            optionsWindow = new FSXAutoSave.OptionsWindow(this);
+            optionsWindow = new P3DAutoSave.OptionsWindow(this);
             optionsWindow.Visible = false;
             saveTimer = new System.Timers.Timer();
             saveTimer.Elapsed += new ElapsedEventHandler(saveGame);
 
+            autoSavedFlightsPath = "C:\\Users\\" + Environment.UserName + "\\Documents\\Prepar3D v " + p3dVersion + " Files\\P3DAutoSave\\";
+
             loadSettings();
 
-            fsx.MenuAddItem("FSXAutoSave", EVENTS.EVENT_MENU, 0);
-            fsx.MenuAddSubItem(EVENTS.EVENT_MENU, "Enable/Disable", EVENTS.EVENT_MENU_ENABLE_DISABLE, 0);
-            fsx.MenuAddSubItem(EVENTS.EVENT_MENU, "Options", EVENTS.EVENT_MENU_OPTIONS, 0);
+            p3d.MenuAddItem("P3DAutoSave", EVENTS.EVENT_MENU, 0);
+            p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Enable/Disable", EVENTS.EVENT_MENU_ENABLE_DISABLE, 0);
+            p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Options", EVENTS.EVENT_MENU_OPTIONS, 0);
         }
 
         public void resetSaveTimer()
@@ -73,9 +74,9 @@ namespace FSXAutoSave
             saveInterval = Properties.Settings.Default.SaveInterval;
             maxNumSavesToKeep = Properties.Settings.Default.MaxNumSaves;
             canSaveWhilePaused = Properties.Settings.Default.SaveWhilePaused;
-            autoSaveOnFSXStart = Properties.Settings.Default.SaveEnabledOnStart;
+            autoSaveOnP3DStart = Properties.Settings.Default.SaveEnabledOnStart;
 
-            saveEnabled = autoSaveOnFSXStart;
+            saveEnabled = autoSaveOnP3DStart;
 
             resetSaveTimer();
             optionsWindow.loadSettings();
@@ -96,7 +97,7 @@ namespace FSXAutoSave
             Properties.Settings.Default.SaveInterval = saveInterval;
             Properties.Settings.Default.MaxNumSaves = maxNumSavesToKeep;
             Properties.Settings.Default.SaveWhilePaused = canSaveWhilePaused;
-            Properties.Settings.Default.SaveEnabledOnStart = autoSaveOnFSXStart;
+            Properties.Settings.Default.SaveEnabledOnStart = autoSaveOnP3DStart;
 
             Properties.Settings.Default.Save();
             Console.WriteLine("Settings saved.");
@@ -107,43 +108,43 @@ namespace FSXAutoSave
         {
             try
             {
-                fsx = new SimConnect("FSXAutoSave", dummyWindow.Handle, SimConnectDummyWindow.WM_USER_SIMCONNECT, null, 0);
+                p3d = new SimConnect("P3DAutoSave", dummyWindow.Handle, SimConnectDummyWindow.WM_USER_SIMCONNECT, null, 0);
             }
             catch (COMException e)
             {
-                MessageBox.Show("Please start FSX before launching this application.");
+                MessageBox.Show("Please start P3D before launching this application.");
                 Environment.Exit(1);
             }
 
             // listen to quit msg
-            fsx.OnRecvQuit += new SimConnect.RecvQuitEventHandler(fsx_OnRecvQuit);
+            p3d.OnRecvQuit += new SimConnect.RecvQuitEventHandler(p3d_OnRecvQuit);
 
             // listen to events
-            fsx.OnRecvEvent += new SimConnect.RecvEventEventHandler(fsx_OnRecvEvent);
+            p3d.OnRecvEvent += new SimConnect.RecvEventEventHandler(p3d_OnRecvEvent);
 
             // Subscribe to system events
-            fsx.SubscribeToSystemEvent(EVENTS.SIM_START, "SimStart");
-            fsx.SubscribeToSystemEvent(EVENTS.SIM_STOP, "SimStop");
-            fsx.SubscribeToSystemEvent(EVENTS.SIM_PAUSE, "Pause");
+            p3d.SubscribeToSystemEvent(EVENTS.SIM_START, "SimStart");
+            p3d.SubscribeToSystemEvent(EVENTS.SIM_STOP, "SimStop");
+            p3d.SubscribeToSystemEvent(EVENTS.SIM_PAUSE, "Pause");
 
             // Turn events on
-            fsx.SetSystemEventState(EVENTS.SIM_START, SIMCONNECT_STATE.ON);
-            fsx.SetSystemEventState(EVENTS.SIM_STOP, SIMCONNECT_STATE.ON);
-            fsx.SetSystemEventState(EVENTS.SIM_PAUSE, SIMCONNECT_STATE.ON);
+            p3d.SetSystemEventState(EVENTS.SIM_START, SIMCONNECT_STATE.ON);
+            p3d.SetSystemEventState(EVENTS.SIM_STOP, SIMCONNECT_STATE.ON);
+            p3d.SetSystemEventState(EVENTS.SIM_PAUSE, SIMCONNECT_STATE.ON);
             Console.WriteLine("SimConnect initialized");
         }
 
         public void closeConnection()
         {
-            if (fsx != null)
+            if (p3d != null)
             {
-                fsx.Dispose();
-                fsx = null;
+                p3d.Dispose();
+                p3d = null;
             }
         }
 
         // Simulator event handler
-        public void fsx_OnRecvEvent(SimConnect sender, SIMCONNECT_RECV_EVENT recEvent)
+        public void p3d_OnRecvEvent(SimConnect sender, SIMCONNECT_RECV_EVENT recEvent)
         {
             switch (recEvent.uEventID)
             {
@@ -186,8 +187,8 @@ namespace FSXAutoSave
             }
         }
 
-        // Close FSX
-        public void fsx_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
+        // Close P3D
+        public void p3d_OnRecvQuit(SimConnect sender, SIMCONNECT_RECV data)
         {
             closeConnection();
             Application.Exit();
@@ -206,20 +207,11 @@ namespace FSXAutoSave
                     // Get files in directory and delete least recent one if number of files exceeds capacity
                     var fileArr = Directory.GetFiles(autoSavedFlightsPath);
                     Array.Sort(fileArr);
-                    /*
-                    var autoSavedFlights = new LinkedList<string>(fileArr);
-                    while (autoSavedFlights.Count >= maxNumSavesToKeep)
-                    {
-                        string removedFlight = autoSavedFlights.Re;
-                        autoSavedFlights.RemoveFirst();
-                        Directory.Delete(removedFlight, true);
-                    }
-                    */
 
                     #if !DEBUG
-                        string fullPath = "FSXAutoSave\\" + FILENAME_BASE + currentTime;
+                        string fullPath = "P3DAutoSave\\" + FILENAME_BASE + currentTime;
                         Console.WriteLine("Full path: " + fullPath);
-                        fsx.FlightSave(fullPath, null, "FSXAutoSave autosaved flight", 0);
+                        fsx.FlightSave(fullPath, null, "P3DAutoSave autosaved flight", 0);
                     #endif
                     Console.WriteLine("Game saved: " + currentTime);
                 }
@@ -227,12 +219,12 @@ namespace FSXAutoSave
         }
 
 
-        // events raised from options window or 'dummy' FSX event handler window
+        // events raised from options window or 'dummy' P3D event handler window
         public void receiveMessage()
         {
-            if (fsx != null)
+            if (p3d != null)
             {
-                fsx.ReceiveMessage();
+                p3d.ReceiveMessage();
             }
         }
 
@@ -271,15 +263,20 @@ namespace FSXAutoSave
             Console.WriteLine("Max. number of saves changed to " + maxNumSavesToKeep);
         }
 
-        public void enableAutoSaveOnFSXStart()
+        public void enableAutoSaveOnP3DStart()
         {
-            autoSaveOnFSXStart = true;
+            autoSaveOnP3DStart = true;
         }
 
-        public void disableAutoSaveOnFSXStart()
+        public void disableAutoSaveOnP3DStart()
         {
-            autoSaveOnFSXStart = false;
+            autoSaveOnP3DStart = false;
         }
 
+        public void setP3DVersion(int version)
+        {
+            this.p3dVersion = version;
+            Console.WriteLine("P3D version changed to " + version);
+        }
     }
 }

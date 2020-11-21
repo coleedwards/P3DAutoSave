@@ -5,12 +5,12 @@
 
 using System.Windows.Forms;
 
-namespace FSXAutoSave
+namespace P3DAutoSave
 {
     public partial class SimConnectDummyWindow : Form
     {
 
-        private FSXClient client;
+        private P3DClient client;
         public const int WM_USER_SIMCONNECT = 0x0402; // window handle ID
 
         public SimConnectDummyWindow()
@@ -18,7 +18,7 @@ namespace FSXAutoSave
             InitializeComponent();
         }
 
-        public void registerSimConnect(FSXClient client)
+        public void registerSimConnect(P3DClient client)
         {
             this.client = client;
         }
