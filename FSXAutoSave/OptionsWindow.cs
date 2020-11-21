@@ -77,10 +77,5 @@ namespace P3DAutoSave
         {
 
         }
-
-        private void p3dVersionSelector_ValueChanged(object sender, EventArgs e)
-        {
-            fsx.setP3DVersion((int)p3dVersionSelector.Value);
-        }
     }
 }

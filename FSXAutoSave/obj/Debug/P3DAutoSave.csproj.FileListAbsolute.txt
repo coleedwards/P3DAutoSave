@@ -1,4 +1,3 @@
-D:\AutoSave\FSXAutoSave\FSXAutoSave\obj\Debug\P3DAutoSave.csprojAssemblyReference.cache
 D:\AutoSave\FSXAutoSave\FSXAutoSave\obj\Debug\P3DAutoSave.SimConnectDummyWindow.resources
 D:\AutoSave\FSXAutoSave\FSXAutoSave\obj\Debug\P3DAutoSave.OptionsWindow.resources
 D:\AutoSave\FSXAutoSave\FSXAutoSave\obj\Debug\P3DAutoSave.Properties.Resources.resources

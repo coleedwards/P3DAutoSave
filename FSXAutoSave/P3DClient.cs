@@ -22,23 +22,22 @@ namespace P3DAutoSave
         EVENT_MENU,
         EVENT_MENU_ENABLE_DISABLE,
         EVENT_MENU_OPTIONS,
-        EVENT_MENU_SAVE
+        EVENT_MENU_SAVE,
+        EVENT_MENU_CONSOLE
     }
 
     public class P3DClient
-    {
+    { 
+
         private SimConnect p3d; // The SimConnect client
 
         private int saveInterval; // seconds
-        private int p3dVersion = 5;
-        private const string FILENAME_BASE = "P3DAutoSave_";
-        private string autoSavedFlightsPath;
         private int maxNumSavesToKeep;
 
         private bool simRunning = true;
         private bool simPaused = false;
 
-        private bool saveEnabled;
+        private bool saveEnabled = true;
         private bool canSaveWhilePaused;
         private bool autoSaveOnP3DStart;
         private System.Timers.Timer saveTimer;
@@ -54,14 +53,13 @@ namespace P3DAutoSave
             saveTimer = new System.Timers.Timer();
             saveTimer.Elapsed += new ElapsedEventHandler(saveGame);
 
-            autoSavedFlightsPath = "C:\\Users\\" + Environment.UserName + "\\Documents\\Prepar3D v " + p3dVersion + " Files\\P3DAutoSave\\";
-
             loadSettings();
 
             p3d.MenuAddItem("P3DAutoSave", EVENTS.EVENT_MENU, 0);
             p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Enable/Disable", EVENTS.EVENT_MENU_ENABLE_DISABLE, 0);
             p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Options", EVENTS.EVENT_MENU_OPTIONS, 0);
             p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Save", EVENTS.EVENT_MENU_SAVE, 0);
+            p3d.MenuAddSubItem(EVENTS.EVENT_MENU, "Open Console", EVENTS.EVENT_MENU_CONSOLE, 0);
         }
 
         public void resetSaveTimer()
@@ -192,6 +190,9 @@ namespace P3DAutoSave
                     Console.WriteLine("Save menu pressed");
                     saveGame(null, null);
                     break;
+                case (uint)EVENTS.EVENT_MENU_CONSOLE:
+                    Program.showConsole();
+                    break;
             }
         }
 
@@ -208,34 +209,17 @@ namespace P3DAutoSave
             {
                 if (canSaveWhilePaused || (!canSaveWhilePaused && !simPaused))
                 {
-
-                    Console.WriteLine("3");
-
-                    Console.WriteLine("test1");
-                    string currentTime = DateTime.Now.ToString();
-                    // Filter slashes, colons, and spaces
-                    currentTime = currentTime.Replace('/', '_').Replace(':', '_').Replace(' ', '_');
-                    Console.WriteLine("test3");
-
-                    Console.WriteLine("test5");
-
-                    Console.WriteLine("test6");
-                    string fullPath = "P3DAutoSave\\" + FILENAME_BASE + currentTime;
-                    Console.WriteLine("Full path: " + fullPath);
-                    p3d.FlightSave(fullPath, null, "P3DAutoSave autosaved flight", 0);
-                    Console.WriteLine("Game saved: " + currentTime);
-                    Console.WriteLine("test7");
-                } else
-                {
-                    Console.WriteLine("2");
-                    Console.WriteLine(canSaveWhilePaused);
-                    Console.WriteLine(simPaused);
-                }
-            } else
-            {
-                Console.WriteLine("1");
-                Console.WriteLine(saveEnabled);
-                Console.WriteLine(simRunning);
+                    string time = DateTime.Now.ToString();
+                    try
+                    {
+                        p3d.FlightSave("save-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" + DateTime.Now.Second, "AutoSave " + DateTime.Now.DayOfWeek.ToString() + " " + (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + " (saved by P3DAutosave)", "P3DAutoSave autosaved flight", 0);
+                    } catch (Exception exception)
+                    {
+                        MessageBox.Show("AutoSave failed. See console for more information.");
+                        Console.WriteLine(exception.StackTrace);
+                    }
+                    Console.WriteLine("Saved at " + time);
+                } 
             }
         }
 
@@ -264,7 +248,7 @@ namespace P3DAutoSave
         public void enableSaveWhilePaused()
         {
             canSaveWhilePaused = true;
-            Console.WriteLine("Saving while paused ENABLED.");
+            Console.WriteLine("Saving while paused ENABLED");
         }
 
         public void disableSaveWhilePaused()
@@ -294,12 +278,6 @@ namespace P3DAutoSave
         public void disableAutoSaveOnP3DStart()
         {
             autoSaveOnP3DStart = false;
-        }
-
-        public void setP3DVersion(int version)
-        {
-            this.p3dVersion = version;
-            Console.WriteLine("P3D version changed to " + version);
         }
     }
 }

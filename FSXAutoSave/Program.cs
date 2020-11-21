@@ -20,22 +20,8 @@ namespace P3DAutoSave
         [STAThread]
         public static void Main(string[] args)
         {
-            #if !DEBUG
-                // Check if program was started by user or FSX
-                if (args.Length != 1 || args[0] != "-f")
-                {
-                    MessageBox.Show("You have started P3DAutoSave outside of FSX (i.e. by double-clicking the "
-                        + "executable file). Please be aware that running multiple instances of P3DAutoSave may "
-                        + "result in strange behavior. The application will now close, but you may override this "
-                        + "functionality by running P3DAutoSave with the -f command-line flag.");
-                    Environment.Exit(1);
-                }
-            #endif
-
             // Setup debug console if in debug mode
-            #if DEBUG
-                AllocConsole();
-            #endif
+            AllocConsole();
 
             // Setup and start the application
             Application.EnableVisualStyles();
@@ -43,10 +29,16 @@ namespace P3DAutoSave
             SimConnectDummyWindow form1 = new SimConnectDummyWindow();
             form1.Visible = false;
 
-
             P3DClient fsx = new P3DClient(form1);
             form1.registerSimConnect(fsx);
             Application.Run();
+
+            MessageBox.Show("P3DAutoSave Succesfully Started");
+        }
+        
+        public static void showConsole()
+        {
+            AllocConsole();
         }
     }
 }
