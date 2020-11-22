@@ -54,6 +54,7 @@ namespace P3DAutoSave
             selectorMaxNumSavesToKeep.Value = Properties.Settings.Default.MaxNumSaves;
             checkBoxSaveWhilePaused.Checked = Properties.Settings.Default.SaveWhilePaused;
             checkBoxAutosaveEnabledWhenFSXStarts.Checked = Properties.Settings.Default.SaveEnabledOnStart;
+            checkBoxSaveWhileOnGround.Checked = Properties.Settings.Default.SaveWhileGround;
         }
 
         private void buttonSaveSettings_Click(object sender, EventArgs e)
@@ -74,6 +75,11 @@ namespace P3DAutoSave
         }
 
         private void OptionsWindow_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void checkBoxSaveWhileOnGround_CheckedChanged(object sender, EventArgs e)
         {
 
         }

@@ -35,6 +35,7 @@
             this.buttonSaveSettings = new System.Windows.Forms.Button();
             this.checkBoxAutosaveEnabledWhenFSXStarts = new System.Windows.Forms.CheckBox();
             this.checkBoxSaveWhilePaused = new System.Windows.Forms.CheckBox();
+            this.checkBoxSaveWhileOnGround = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.selectorMaxNumSavesToKeep)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.selectorSaveInterval)).BeginInit();
             this.SuspendLayout();
@@ -105,7 +106,7 @@
             // 
             // buttonSaveSettings
             // 
-            this.buttonSaveSettings.Location = new System.Drawing.Point(68, 106);
+            this.buttonSaveSettings.Location = new System.Drawing.Point(69, 129);
             this.buttonSaveSettings.Name = "buttonSaveSettings";
             this.buttonSaveSettings.Size = new System.Drawing.Size(100, 23);
             this.buttonSaveSettings.TabIndex = 5;
@@ -116,7 +117,7 @@
             // checkBoxAutosaveEnabledWhenFSXStarts
             // 
             this.checkBoxAutosaveEnabledWhenFSXStarts.AutoSize = true;
-            this.checkBoxAutosaveEnabledWhenFSXStarts.Location = new System.Drawing.Point(15, 83);
+            this.checkBoxAutosaveEnabledWhenFSXStarts.Location = new System.Drawing.Point(15, 106);
             this.checkBoxAutosaveEnabledWhenFSXStarts.Name = "checkBoxAutosaveEnabledWhenFSXStarts";
             this.checkBoxAutosaveEnabledWhenFSXStarts.Size = new System.Drawing.Size(216, 17);
             this.checkBoxAutosaveEnabledWhenFSXStarts.TabIndex = 6;
@@ -127,7 +128,7 @@
             // checkBoxSaveWhilePaused
             // 
             this.checkBoxSaveWhilePaused.AutoSize = true;
-            this.checkBoxSaveWhilePaused.Location = new System.Drawing.Point(15, 60);
+            this.checkBoxSaveWhilePaused.Location = new System.Drawing.Point(15, 83);
             this.checkBoxSaveWhilePaused.Name = "checkBoxSaveWhilePaused";
             this.checkBoxSaveWhilePaused.Size = new System.Drawing.Size(116, 17);
             this.checkBoxSaveWhilePaused.TabIndex = 4;
@@ -135,11 +136,23 @@
             this.checkBoxSaveWhilePaused.UseVisualStyleBackColor = true;
             this.checkBoxSaveWhilePaused.CheckedChanged += new System.EventHandler(this.checkBoxSaveWhilePaused_CheckedChanged);
             // 
+            // checkBoxSaveWhileOnGround
+            // 
+            this.checkBoxSaveWhileOnGround.AutoSize = true;
+            this.checkBoxSaveWhileOnGround.Location = new System.Drawing.Point(15, 60);
+            this.checkBoxSaveWhileOnGround.Name = "checkBoxSaveWhileOnGround";
+            this.checkBoxSaveWhileOnGround.Size = new System.Drawing.Size(129, 17);
+            this.checkBoxSaveWhileOnGround.TabIndex = 7;
+            this.checkBoxSaveWhileOnGround.Text = "Save while on ground";
+            this.checkBoxSaveWhileOnGround.UseVisualStyleBackColor = true;
+            this.checkBoxSaveWhileOnGround.CheckedChanged += new System.EventHandler(this.checkBoxSaveWhileOnGround_CheckedChanged);
+            // 
             // OptionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(256, 146);
+            this.ClientSize = new System.Drawing.Size(256, 163);
+            this.Controls.Add(this.checkBoxSaveWhileOnGround);
             this.Controls.Add(this.checkBoxAutosaveEnabledWhenFSXStarts);
             this.Controls.Add(this.buttonSaveSettings);
             this.Controls.Add(this.checkBoxSaveWhilePaused);
@@ -170,5 +183,6 @@
         private System.Windows.Forms.Button buttonSaveSettings;
         private System.Windows.Forms.CheckBox checkBoxAutosaveEnabledWhenFSXStarts;
         private System.Windows.Forms.CheckBox checkBoxSaveWhilePaused;
+        private System.Windows.Forms.CheckBox checkBoxSaveWhileOnGround;
     }
 }

@@ -19,11 +19,17 @@ namespace P3DAutoSave
         SIM_START,
         SIM_STOP,
         SIM_PAUSE,
+        RECEIVE_DATA,
         EVENT_MENU,
         EVENT_MENU_ENABLE_DISABLE,
         EVENT_MENU_OPTIONS,
         EVENT_MENU_SAVE,
         EVENT_MENU_CONSOLE
+    }
+
+    enum VARIABLES
+    {
+        ON_GROUND
     }
 
     public class P3DClient
@@ -40,10 +46,13 @@ namespace P3DAutoSave
         private bool saveEnabled = true;
         private bool canSaveWhilePaused;
         private bool autoSaveOnP3DStart;
+        private bool canSaveWhileGround;
         private System.Timers.Timer saveTimer;
 
         private SimConnectDummyWindow dummyWindow;
         private OptionsWindow optionsWindow;
+
+        private bool onGround = true;
 
         public P3DClient(SimConnectDummyWindow dummyWindow) {
             this.dummyWindow = dummyWindow;
@@ -76,6 +85,7 @@ namespace P3DAutoSave
             maxNumSavesToKeep = Properties.Settings.Default.MaxNumSaves;
             canSaveWhilePaused = Properties.Settings.Default.SaveWhilePaused;
             autoSaveOnP3DStart = Properties.Settings.Default.SaveEnabledOnStart;
+            canSaveWhileGround = Properties.Settings.Default.SaveWhileGround;
 
             saveEnabled = autoSaveOnP3DStart;
 
@@ -87,10 +97,11 @@ namespace P3DAutoSave
 
         public void printSettings()
         {
-            Console.WriteLine(string.Format("saveInterval: {0}, maxNumSaves: {1}, saveWhilePaused: {2}",
+            Console.WriteLine(string.Format("saveInterval: {0}, maxNumSaves: {1}, saveWhilePaused: {2}, saveWhileGround: {3}",
                 Properties.Settings.Default.SaveInterval,
                 Properties.Settings.Default.MaxNumSaves,
-                Properties.Settings.Default.SaveWhilePaused));
+                Properties.Settings.Default.SaveWhilePaused,
+                Properties.Settings.Default.SaveWhileGround));
         }
 
         public void saveSettings()
@@ -99,6 +110,7 @@ namespace P3DAutoSave
             Properties.Settings.Default.MaxNumSaves = maxNumSavesToKeep;
             Properties.Settings.Default.SaveWhilePaused = canSaveWhilePaused;
             Properties.Settings.Default.SaveEnabledOnStart = autoSaveOnP3DStart;
+            Properties.Settings.Default.SaveWhileGround = canSaveWhileGround;
 
             Properties.Settings.Default.Save();
             Console.WriteLine("Settings saved.");
@@ -133,6 +145,11 @@ namespace P3DAutoSave
             p3d.SetSystemEventState(EVENTS.SIM_START, SIMCONNECT_STATE.ON);
             p3d.SetSystemEventState(EVENTS.SIM_STOP, SIMCONNECT_STATE.ON);
             p3d.SetSystemEventState(EVENTS.SIM_PAUSE, SIMCONNECT_STATE.ON);
+
+            // SimConnect variables
+            p3d.AddToDataDefinition(VARIABLES.ON_GROUND, "SIM ON GROUND", "Bool", SIMCONNECT_DATATYPE.FLOAT64, 0, SimConnect.SIMCONNECT_UNUSED);
+            p3d.RequestDataOnSimObject(EVENTS.RECEIVE_DATA, VARIABLES.ON_GROUND, SimConnect.SIMCONNECT_OBJECT_ID_USER, SIMCONNECT_PERIOD.SECOND, 0, 0, 0, 0);
+
             Console.WriteLine("SimConnect initialized");
         }
 
@@ -193,6 +210,10 @@ namespace P3DAutoSave
                 case (uint)EVENTS.EVENT_MENU_CONSOLE:
                     Program.showConsole();
                     break;
+                case (uint)EVENTS.RECEIVE_DATA:
+                    // TODO: Recode this section as I might need to grab more data at a later time
+                    onGround = recEvent.dwData==1;
+                    break;
             }
         }
 
@@ -209,11 +230,17 @@ namespace P3DAutoSave
             {
                 if (canSaveWhilePaused || (!canSaveWhilePaused && !simPaused))
                 {
+                    if (!canSaveWhileGround && onGround)
+                    {
+                        return;
+                    }
+
                     string time = DateTime.Now.ToString();
                     try
                     {
                         p3d.FlightSave("save-" + DateTime.Now.Hour + "-" + DateTime.Now.Minute + "-" + DateTime.Now.Second, "AutoSave " + DateTime.Now.DayOfWeek.ToString() + " " + (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond) + " (saved by P3DAutosave)", "P3DAutoSave autosaved flight", 0);
-                    } catch (Exception exception)
+                    }
+                    catch (Exception exception)
                     {
                         MessageBox.Show("AutoSave failed. See console for more information.");
                         Console.WriteLine(exception.StackTrace);
@@ -222,7 +249,6 @@ namespace P3DAutoSave
                 } 
             }
         }
-
 
         // events raised from options window or 'dummy' P3D event handler window
         public void receiveMessage()
@@ -279,5 +305,11 @@ namespace P3DAutoSave
         {
             autoSaveOnP3DStart = false;
         }
+
+        public void toggleSaveOnGround()
+        {
+            canSaveWhileGround = !canSaveWhileGround;
+        }
+        
     }
 }
