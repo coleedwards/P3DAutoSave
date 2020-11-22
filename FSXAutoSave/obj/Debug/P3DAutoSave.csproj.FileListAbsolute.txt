@@ -10,3 +10,16 @@ D:\AutoSave\FSXAutoSave\FSXAutoSave\obj\Debug\P3DAutoSave.csproj.CopyComplete
 D:\AutoSave\FSXAutoSave\FSXAutoSave\obj\Debug\P3DAutoSave.exe
 D:\AutoSave\FSXAutoSave\FSXAutoSave\obj\Debug\P3DAutoSave.pdb
 D:\AutoSave\FSXAutoSave\FSXAutoSave\bin\Debug\LockheedMartin.Prepar3D.SimConnect.dll
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\bin\Debug\P3DAutoSave.exe.config
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\bin\Debug\P3DAutoSave.exe
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\bin\Debug\P3DAutoSave.pdb
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\bin\Debug\LockheedMartin.Prepar3D.SimConnect.dll
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.csprojAssemblyReference.cache
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.SimConnectDummyWindow.resources
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.OptionsWindow.resources
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.Properties.Resources.resources
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.csproj.GenerateResource.cache
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.csproj.CoreCompileInputs.cache
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.csproj.CopyComplete
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.exe
+D:\AutoSave\P3DAutoSAve\FSXAutoSave\obj\Debug\P3DAutoSave.pdb
