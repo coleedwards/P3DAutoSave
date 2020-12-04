@@ -213,6 +213,7 @@ namespace P3DAutoSave
                 case (uint)EVENTS.RECEIVE_DATA:
                     // TODO: Recode this section as I might need to grab more data at a later time
                     onGround = recEvent.dwData==1;
+                    Console.WriteLine("ground status changed");
                     break;
             }
         }
